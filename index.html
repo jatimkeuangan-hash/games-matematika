@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koko & Petualangan Ceria - Belajar Huruf & Angka</title>
+    <!-- Tailwind CSS for modern responsive pastel styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka for cheerful child-friendly typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', cursive, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        /* Custom Keyframe Animations for Kid-friendly Delight */
+        @keyframes bounceSlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1)); }
+        }
+        @keyframes floatAnim {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        .animate-bounce-slow {
+            animation: bounceSlow 2s ease-in-out infinite;
+        }
+        .animate-wiggle {
+            animation: wiggle 0.5s ease-in-out infinite;
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 1.5s infinite;
+        }
+        .animate-float {
+            animation: floatAnim 3s ease-in-out infinite;
+        }
+        /* Glassmorphism card effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 4px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-sky-300 to-emerald-200 min-h-screen flex flex-col items-center justify-center overflow-x-hidden text-slate-700">
+
+    <div id="app-container" class="w-full max-w-4xl min-h-[600px] md:min-h-[700px] bg-sky-100 rounded-3xl shadow-2xl border-8 border-amber-300 relative flex flex-col overflow-hidden my-auto">
+        
+        <!-- Top Status Bar (Score & Voice Toggle) -->
+        <div class="bg-amber-400/90 px-6 py-3 flex justify-between items-center border-b-4 border-amber-500 z-20">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl">🐵</span>
+                <span id="header-title" class="text-xl md:text-2xl font-bold text-white drop-shadow">Koko & Petualangan Ceria</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="bg-white/80 px-4 py-1.5 rounded-full border-2 border-amber-500 flex items-center space-x-2 shadow-inner">
+                    <span class="text-xl">⭐</span>
+                    <span id="score-display" class="font-bold text-lg text-amber-600">0</span>
+                </div>
+                <button onclick="toggleAudio()" id="sound-toggle-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white p-2.5 rounded-full shadow-lg transition transform active:scale-95 border-2 border-emerald-600" title="Suara Aktif/Nonaktif">
+                    🔊
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN VIEW AREA (Dynamic State Machine Screens) -->
+        <div id="screen-viewport" class="relative flex-1 flex flex-col items-center justify-center p-4 md:p-8 overflow-y-auto">
+            
+            <!-- SCREEN 1: MENU UTAMA -->
+            <div id="screen-menu" class="w-full flex flex-col items-center justify-center space-y-6 text-center animate-fadeIn">
+                <!-- Mascot & Speech Balloon -->
+                <div class="relative flex flex-col items-center">
+                    <div class="bg-white px-6 py-3 rounded-2xl shadow-xl border-4 border-amber-400 mb-3 animate-bounce-slow max-w-xs md:max-w-md">
+                        <p id="menu-speech" class="text-base md:text-xl font-bold text-amber-700">
+                            "Halo teman-teman! Mau main di Hutan Huruf atau Pantai Angka hari ini? Pilih gambarnya ya!"
+                        </p>
+                    </div>
+                    <!-- Koko Monkey Avatar -->
+                    <div class="text-7xl md:text-8xl animate-float cursor-pointer filter drop-shadow-md" onclick="speakText(document.getElementById('menu-speech').innerText)">
+                        🐵🍌
+                    </div>
+                </div>
+
+                <!-- Zone Selection Buttons -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl px-4 mt-2">
+                    <!-- Zone 1: Hutan Huruf -->
+                    <button onclick="switchState('mission1')" class="group bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white p-6 rounded-3xl border-b-8 border-emerald-800 shadow-xl transition transform hover:-translate-y-2 active:translate-y-1 flex flex-col items-center space-y-3">
+                        <div class="text-5xl md:text-6xl group-hover:scale-110 transition duration-300">🌳🔤</div>
+                        <h2 class="text-2xl md:text-3xl font-bold drop-shadow">Hutan Huruf</h2>
+                        <p class="text-sm md:text-base text-emerald-100 font-medium">Tangkap buah berawalan huruf "B"!</p>
+                    </button>
+
+                    <!-- Zone 2: Pantai Angka -->
+                    <button onclick="switchState('mission2')" class="group bg-gradient-to-b from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-white p-6 rounded-3xl border-b-8 border-blue-700 shadow-xl transition transform hover:-translate-y-2 active:translate-y-1 flex flex-col items-center space-y-3">
+                        <div class="text-5xl md:text-6xl group-hover:scale-110 transition duration-300">🏖️🔢</div>
+                        <h2 class="text-2xl md:text-3xl font-bold drop-shadow">Pantai Angka</h2>
+                        <p class="text-sm md:text-base text-cyan-100 font-medium">Hitung dan kumpulkan 5 ikan!</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: MISI 1 (HUTAN HURUF) -->
+            <div id="screen-mission1" class="hidden w-full flex-col items-center justify-between h-full space-y-4">
+                <!-- Header / Instruction bar -->
+                <div class="w-full flex justify-between items-center bg-white/80 px-4 py-2 rounded-2xl border-2 border-emerald-400 shadow-md">
+                    <button onclick="switchState('menu')" class="bg-amber-400 hover:bg-amber-500 text-white px-4 py-1.5 rounded-xl font-bold shadow transition flex items-center space-x-1">
+                        <span>⬅️ Menu</span>
+                    </button>
+                    <div class="text-center flex-1 mx-2">
+                        <p id="m1-instruction" class="text-sm md:text-base font-bold text-emerald-800">
+                            "Keranjang ini untuk buah berawalan huruf B! Mana buah yang huruf depannya B?"
+                        </p>
+                    </div>
+                    <button onclick="speakText(document.getElementById('m1-instruction').innerText)" class="bg-emerald-500 hover:bg-emerald-600 text-white p-2 rounded-xl shadow">🔊</button>
+                </div>
+
+                <!-- Game Play Area: Tree & Basket -->
+                <div class="relative w-full flex-1 bg-gradient-to-b from-emerald-300 to-emerald-500 rounded-3xl p-6 flex flex-col justify-between items-center border-4 border-emerald-600 shadow-inner overflow-hidden min-h-[380px]">
+                    <!-- Canopy & Mascot -->
+                    <div class="flex items-center justify-center space-x-4">
+                        <div class="text-6xl animate-bounce-slow">🌳</div>
+                        <div class="bg-white/90 px-4 py-2 rounded-2xl border-2 border-emerald-500 shadow text-center">
+                            <span class="text-2xl">🐵 Koko:</span>
+                            <span class="text-sm font-semibold text-emerald-700 block">Cari yang hurufnya B ya!</span>
+                        </div>
+                    </div>
+
+                    <!-- Dropping / Selectable Fruits Area -->
+                    <div id="fruit-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-xl my-4 z-10">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- Target Basket -->
+                    <div id="basket-dropzone" class="w-48 h-32 bg-amber-700/80 rounded-t-3xl border-4 border-amber-900 border-b-0 flex flex-col items-center justify-center shadow-2xl relative transition transform hover:scale-105">
+                        <div class="absolute -top-6 bg-amber-500 text-white px-4 py-1 rounded-full font-bold text-xl border-2 border-amber-700 shadow-md">
+                            KERANJANG [ B ]
+                        </div>
+                        <div class="text-5xl mt-4">🧺</div>
+                        <span id="basket-status" class="text-xs text-amber-100 font-semibold mt-1">Seret / Tap Buah ke Sini</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: MISI 2 (PANTAI ANGKA) -->
+            <div id="screen-mission2" class="hidden w-full flex-col items-center justify-between h-full space-y-4">
+                <!-- Header Instruction bar -->
+                <div class="w-full flex justify-between items-center bg-white/80 px-4 py-2 rounded-2xl border-2 border-cyan-400 shadow-md">
+                    <button onclick="switchState('menu')" class="bg-amber-400 hover:bg-amber-500 text-white px-4 py-1.5 rounded-xl font-bold shadow transition">
+                        <span>⬅️ Menu</span>
+                    </button>
+                    <div class="text-center flex-1 mx-2">
+                        <p id="m2-instruction" class="text-sm md:text-base font-bold text-cyan-900">
+                            "Koko butuh 5 ikan! Yuk bantu hitung sambil memasukkannya ke ember."
+                        </p>
+                    </div>
+                    <button onclick="speakText(document.getElementById('m2-instruction').innerText)" class="bg-cyan-500 hover:bg-cyan-600 text-white p-2 rounded-xl shadow">🔊</button>
+                </div>
+
+                <!-- Beach & Sea Play Area -->
+                <div class="relative w-full flex-1 bg-gradient-to-b from-sky-200 via-cyan-300 to-blue-400 rounded-3xl p-6 flex flex-col justify-between items-center border-4 border-cyan-600 shadow-inner overflow-hidden min-h-[380px]">
+                    
+                    <!-- Top Info: Counter & Bucket -->
+                    <div class="w-full flex justify-between items-center px-4">
+                        <div class="bg-white/90 px-4 py-2 rounded-2xl border-2 border-cyan-500 shadow flex items-center space-x-2">
+                            <span class="text-2xl">🪣</span>
+                            <div>
+                                <span class="text-xs text-slate-500 block font-bold">Ember Koko</span>
+                                <span id="fish-counter-text" class="text-xl font-bold text-blue-700">0 / 5 Ikan</span>
+                            </div>
+                        </div>
+                        <div class="text-4xl animate-bounce">🐵🌴</div>
+                    </div>
+
+                    <!-- Swimming Fish Area (Tap to Count) -->
+                    <div id="fish-pond" class="grid grid-cols-3 md:grid-cols-4 gap-4 w-full max-w-2xl my-auto z-10 py-6">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- Water Waves Effect Footer -->
+                    <div class="w-full text-center text-cyan-900 font-bold text-sm bg-blue-400/50 py-1 rounded-xl">
+                        🌊 Tap ikan satu per satu untuk dimasukkan ke ember! 🌊
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 4: HALAMAN PENUTUP & REWARD -->
+            <div id="screen-reward" class="hidden w-full flex-col items-center justify-center space-y-6 text-center animate-fadeIn py-6">
+                <!-- Treasure Chest Container -->
+                <div class="relative flex flex-col items-center">
+                    <div id="treasure-chest" class="text-8xl md:text-9xl animate-bounce-slow filter drop-shadow-lg cursor-pointer" onclick="openChest()">
+                        🎁
+                    </div>
+                    <div id="reward-stars" class="absolute -top-10 text-5xl animate-pulse-glow hidden">
+                        🌟✨⭐✨🌟
+                    </div>
+                </div>
+
+                <!-- Congratulatory Message -->
+                <div class="bg-white/90 p-6 rounded-3xl shadow-xl border-4 border-amber-400 max-w-lg mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-amber-600 mb-2 drop-shadow-sm">
+                        Luar Biasa! Kamu Berhasil! 🎉
+                    </h2>
+                    <p id="reward-subtitle" class="text-base md:text-lg text-slate-600 font-medium">
+                        Kamu hebat menyelesaikan Hutan Huruf dan Pantai Angka hari ini dengan total skor bintang cemerlang!
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-4 w-full max-w-md justify-center">
+                    <button onclick="resetApp()" class="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-lg border-b-6 border-amber-700 transition transform active:scale-95 flex items-center justify-center space-x-2">
+                        <span>🔄 Main Lagi</span>
+                    </button>
+                    <button onclick="switchState('menu')" class="bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-lg border-b-6 border-emerald-700 transition transform active:scale-95 flex items-center justify-center space-x-2">
+                        <span>🏠 Menu Utama</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Credits -->
+        <div class="bg-amber-100 py-2 text-center text-xs font-bold text-amber-800 border-t-2 border-amber-200">
+            Aplikasi Pembelajaran Interaktif PAUD/TK • Didukung Suara & Sentuhan Ramah Anak ✨
+        </div>
+    </div>
+
+    <script>
+        // Global State & Data Store
+        let currentScreen = 'menu';
+        let score = 0;
+        let soundEnabled = true;
+        let mission2Count = 0;
+        const targetMission2 = 5;
+
+        // Web Speech Synthesis Helper
+        function speakText(text) {
+            if (!soundEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // Stop previous utterance
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = 0.9; // Slightly slower for kids
+            utterance.pitch = 1.2; // Cheerful higher pitch
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Toggle Audio Helper
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('sound-toggle-btn');
+            btn.innerHTML = soundEnabled ? '🔊' : '🔇';
+            btn.className = soundEnabled ? 'bg-emerald-500 hover:bg-emerald-600 text-white p-2.5 rounded-full shadow-lg transition transform active:scale-95 border-2 border-emerald-600' : 'bg-rose-500 hover:bg-rose-600 text-white p-2.5 rounded-full shadow-lg transition transform active:scale-95 border-2 border-rose-600';
+            if(soundEnabled) speakText("Suara diaktifkan!");
+        }
+
+        // State Machine Screen Switcher
+        function switchState(screenName) {
+            currentScreen = screenName;
+            
+            // Hide all screens
+            document.getElementById('screen-menu').classList.add('hidden');
+            document.getElementById('screen-mission1').classList.add('hidden');
+            document.getElementById('screen-mission2').classList.add('hidden');
+            document.getElementById('screen-reward').classList.add('hidden');
+
+            // Show target screen
+            if (screenName === 'menu') {
+                document.getElementById('screen-menu').classList.remove('hidden');
+                document.getElementById('header-title').innerText = "Koko & Petualangan Ceria";
+                speakText("Halo teman-teman! Mau main di Hutan Huruf atau Pantai Angka hari ini? Pilih gambarnya ya!");
+            } else if (screenName === 'mission1') {
+                document.getElementById('screen-mission1').classList.remove('hidden');
+                document.getElementById('header-title').innerText = "Misi 1: Hutan Huruf";
+                initMission1();
+                speakText("Keranjang ini untuk buah berawalan huruf B! Mana buah yang huruf depannya B?");
+            } else if (screenName === 'mission2') {
+                document.getElementById('screen-mission2').classList.remove('hidden');
+                document.getElementById('header-title').innerText = "Misi 2: Pantai Angka";
+                initMission2();
+                speakText("Koko butuh 5 ikan! Yuk bantu hitung sambil memasukkannya ke ember.");
+            } else if (screenName === 'reward') {
+                document.getElementById('screen-reward').classList.remove('hidden');
+                document.getElementById('header-title').innerText = "Peti Harta Karun Selesai!";
+                speakText("Luar biasa! Kamu berhasil menyelesaikan semua misi hari ini!");
+                triggerRewardEffects();
+            }
+        }
+
+        // --- MISSION 1 LOGIC (Hutan Huruf) ---
+        const mission1Items = [
+            { name: 'Buku', letter: 'B', emoji: '📘', correct: true },
+            { name: 'Bola', letter: 'B', emoji: '⚽', correct: true },
+            { name: 'Apel', letter: 'A', emoji: '🍎', correct: false },
+            { name: 'Mangga', letter: 'M', emoji: '🥭', correct: false }
+        ];
+
+        function initMission1() {
+            const container = document.getElementById('fruit-container');
+            container.innerHTML = '';
+            
+            // Shuffle items slightly
+            let shuffled = [...mission1Items].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-white/90 hover:bg-white p-4 rounded-2xl border-4 border-emerald-400 shadow-lg flex flex-col items-center cursor-pointer transition transform hover:scale-105 active:scale-95";
+                card.innerHTML = `
+                    <span class="text-5xl mb-2">${item.emoji}</span>
+                    <span class="font-bold text-emerald-800 text-lg">${item.name}</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full mt-1 font-semibold">Huruf: ${item.letter}</span>
+                `;
+                
+                // Click / Tap Event
+                card.onclick = () => handleFruitSelection(item, card);
+                container.appendChild(card);
+            });
+        }
+
+        function handleFruitSelection(item, element) {
+            if (item.correct) {
+                // Correct Choice
+                element.style.transform = "scale(0) rotate(360deg)";
+                element.style.transition = "all 0.5s ease";
+                score += 10;
+                document.getElementById('score-display').innerText = score;
+                speakText("Wah, hebat! Buah " + item.name + " benar berawalan huruf B!");
+                
+                // Check if all correct items cleared or allow re-click/progression
+                setTimeout(() => {
+                    element.remove();
+                    // If no more correct items or user collected enough, transition to mission 2
+                    if (document.querySelectorAll('#fruit-container > div').length <= 2) {
+                        speakText("Hebat sekali! Hutan Huruf selesai. Lanjut ke Pantai Angka!");
+                        setTimeout(() => switchState('mission2'), 1500);
+                    }
+                }, 500);
+            } else {
+                // Wrong Choice (Bounce Back / Wiggle effect)
+                element.classList.add('animate-wiggle');
+                speakText("Boing! Coba cari yang huruf awalnya B, bukan " + item.name);
+                setTimeout(() => {
+                    element.classList.remove('animate-wiggle');
+                }, 500);
+            }
+        }
+
+        // --- MISSION 2 LOGIC (Pantai Angka) ---
+        function initMission2() {
+            mission2Count = 0;
+            updateFishCounter();
+            const pond = document.getElementById('fish-pond');
+            pond.innerHTML = '';
+
+            // Generate 8 fishes
+            for (let i = 1; i <= 8; i++) {
+                const fish = document.createElement('div');
+                fish.className = "bg-white/80 hover:bg-white p-3 rounded-2xl border-2 border-cyan-400 shadow-md flex flex-col items-center cursor-pointer transition transform hover:scale-110 active:scale-95 animate-float";
+                fish.innerHTML = `
+                    <span class="text-4xl">🐠</span>
+                    <span class="text-xs font-bold text-cyan-800 mt-1">Ikan #${i}</span>
+                `;
+                
+                fish.onclick = () => handleFishTap(fish, i);
+                pond.appendChild(fish);
+            }
+        }
+
+        const countWords = ["Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan"];
+
+        function handleFishTap(fishElement, index) {
+            if (mission2Count >= targetMission2) return; // Already reached target
+
+            mission2Count++;
+            updateFishCounter();
+
+            // Speak sequential count number
+            let spokenWord = countWords[mission2Count - 1] || mission2Count.toString();
+            speakText(spokenWord);
+
+            // Animate fish jumping out
+            fishElement.style.transform = "translateY(-50px) scale(0.5)";
+            fishElement.style.opacity = "0";
+            fishElement.style.transition = "all 0.4s ease";
+            
+            setTimeout(() => {
+                fishElement.remove();
+            }, 400);
+
+            score += 5;
+            document.getElementById('score-display').innerText = score;
+
+            // Check if target reached
+            if (mission2Count === targetMission2) {
+                speakText("Yey! Target 5 ikan tercapai! Hebat sekali!");
+                setTimeout(() => {
+                    switchState('reward');
+                }, 1500);
+            }
+        }
+
+        function updateFishCounter() {
+            document.getElementById('fish-counter-text').innerText = mission2Count + " / " + targetMission2 + " Ikan";
+        }
+
+        // --- REWARD SCREEN & CHEST EFFECTS ---
+        function openChest() {
+            const chest = document.getElementById('treasure-chest');
+            const stars = document.getElementById('reward-stars');
+            chest.innerText = "👑💎✨";
+            stars.classList.remove('hidden');
+            speakText("Hore! Peti harta karun terbuka! Bintang emas untuk kamu!");
+        }
+
+        function triggerRewardEffects() {
+            const chest = document.getElementById('treasure-chest');
+            const stars = document.getElementById('reward-stars');
+            setTimeout(() => {
+                chest.innerText = "👑💎✨";
+                stars.classList.remove('hidden');
+            }, 500);
+        }
+
+        function resetApp() {
+            score = 0;
+            mission2Count = 0;
+            document.getElementById('score-display').innerText = score;
+            switchState('menu');
+        }
+
+        // Initialize on window load
+        window.onload = function() {
+            // Initial welcoming speech setup
+            console.log("Aplikasi Media Pembelajaran PAUD Koko siap dijalankan.");
+        };
+    </script>
+</body>
+</html>
